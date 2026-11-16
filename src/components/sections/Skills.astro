@@ -3,7 +3,11 @@ import SectionShell from '@/components/ui/SectionShell.astro';
 import { skillGroups } from '@/data/skills';
 ---
 
-<SectionShell id="skills" intro="The tools I use, with the ones I know best marked in teal.">
+<SectionShell
+  id="skills"
+  scene="rise"
+  intro="The tools I use, with the ones I know best marked in teal."
+>
   <dl class="grid gap-x-10 gap-y-8 md:grid-cols-2">
     {skillGroups.map((group) => (
       <div data-reveal class="min-w-0">

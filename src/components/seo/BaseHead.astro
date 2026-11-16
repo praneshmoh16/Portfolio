@@ -56,6 +56,12 @@ const personSchema = {
         theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
       document.documentElement.dataset.theme = theme;
+
+      // Keep in sync with isCinematic() in src/scripts/env.ts.
+      const cinematic =
+        matchMedia('(min-width: 1024px) and (min-height: 640px) and (pointer: fine)').matches &&
+        !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.documentElement.classList.toggle('cinematic', cinematic);
     };
     applyTheme();
     document.addEventListener('astro:after-swap', applyTheme);

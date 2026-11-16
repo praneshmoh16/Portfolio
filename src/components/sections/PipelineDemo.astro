@@ -12,7 +12,7 @@ const steps = ['extract', 'transform', 'validate'];
 <figure
   data-pipeline
   class="border-line bg-surface rounded-xl border p-4 shadow-sm sm:p-5"
-  aria-label="Diagram: five rows move from a legacy table through extract, transform and validate into a cloud table. Rows in 5, rows out 5, difference 0, result pass."
+  aria-label="Diagram: five rows move from a legacy table through extract, transform and validate into a cloud table. Rows in 5, rows out 5, difference 0, result pass, ready for AI."
 >
   <div class="mb-4 flex items-center justify-between">
     <span class="label">pipeline.run</span>
@@ -43,8 +43,10 @@ const steps = ['extract', 'transform', 'validate'];
       <div class="bg-line absolute top-1/2 right-0 left-0 h-px"></div>
       <span
         data-packet
-        class="bg-source absolute top-1/2 left-0 -mt-1 hidden h-2 w-5 rounded-sm"
-      ></span>
+        class="bg-source absolute top-1/2 left-0 -mt-1 hidden h-2 w-5 overflow-hidden rounded-sm"
+      >
+        <span data-packet-fill class="bg-target absolute inset-0"></span>
+      </span>
       <ol class="relative flex justify-between">
         {steps.map((step, i) => (
           <li class="flex w-0 flex-1 flex-col items-center gap-1.5">
@@ -53,8 +55,10 @@ const steps = ['extract', 'transform', 'validate'];
             </span>
             <span
               data-step
-              class="border-line bg-surface size-3 rounded-full border-2 transition-colors"
-            />
+              class="border-line bg-surface relative size-3 overflow-hidden rounded-full border-2"
+            >
+              <span data-step-fill class="bg-target absolute inset-0 opacity-0" />
+            </span>
             <span class="text-muted h-4 font-mono text-[9px] sm:text-[11px]">
               {i % 2 === 0 ? step : ''}
             </span>
@@ -100,8 +104,13 @@ const steps = ['extract', 'transform', 'validate'];
         diff <b class="text-ink font-medium">0</b>
       </span>
     </span>
-    <span data-pass class="bg-target-soft text-target rounded px-2 py-0.5 font-medium">
-      ✓ reconciled: PASS
+    <span class="flex flex-wrap gap-2">
+      <span data-pass class="bg-target-soft text-target rounded px-2 py-0.5 font-medium">
+        ✓ reconciled: PASS
+      </span>
+      <span data-ai-ready class="bg-ink text-bg rounded px-2 py-0.5 font-medium">
+        → ready for AI
+      </span>
     </span>
   </figcaption>
 </figure>

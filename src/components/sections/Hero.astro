@@ -1,23 +1,30 @@
 ---
+/**
+ * Opening scene. In cinematic mode the section holds in place and scrolling
+ * runs the pipeline while the headline lights up line by line.
+ */
 import PipelineDemo from '@/components/sections/PipelineDemo.astro';
 import { hero } from '@/data/hero';
 import { siteConfig } from '@/config/site';
 ---
 
-<section id="top" data-stage data-status="done" class="scroll-mt-16">
-  <div class="mx-auto grid w-full max-w-5xl items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.1fr_1fr]">
+<section id="top" data-stage data-scene="hero" data-status="done" class="scroll-mt-16">
+  <div
+    data-hero-inner
+    class="cine:h-[calc(100svh-57px)] cine:max-w-6xl cine:py-0 mx-auto grid w-full max-w-5xl items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.1fr_1fr]"
+  >
     <div class="min-w-0">
       <p class="label" data-hero-item>
         {hero.eyebrow}
       </p>
-      <h1 class="mt-5 text-5xl leading-[1.02] font-bold tracking-tight sm:text-6xl md:text-7xl">
+      <h1 class="cine:text-[clamp(2.5rem,min(7.5vh,4.6vw),4.5rem)] cine:whitespace-nowrap mt-5 text-5xl leading-[1.02] font-bold tracking-tight sm:text-6xl md:text-7xl">
         <span class="sr-only">{siteConfig.name}. </span>
         {hero.headline.map((line) => (
-          <span class="block" data-hero-item>
+          <span class="block" data-hero-item data-hero-line>
             {line}
           </span>
         ))}
-        <span class="text-target block" data-hero-item>
+        <span class="text-target block" data-hero-item data-hero-line>
           {hero.headlineAccent}
         </span>
       </h1>
@@ -38,7 +45,7 @@ import { siteConfig } from '@/config/site';
           Get in touch
         </a>
       </div>
-      <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4" data-hero-item>
+      <dl class="cine:mt-8 cine:gap-x-8 mt-10 flex flex-wrap gap-x-10 gap-y-4" data-hero-item>
         {hero.stats.map((stat) => (
           <div>
             <dd class="font-display text-3xl font-bold tabular-nums">
@@ -52,6 +59,9 @@ import { siteConfig } from '@/config/site';
     </div>
     <div class="min-w-0" data-hero-item>
       <PipelineDemo />
+      <p data-scroll-hint class="label cine:block mt-4 hidden text-center">
+        scroll to run the pipeline ↓
+      </p>
     </div>
   </div>
 </section>

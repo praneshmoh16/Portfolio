@@ -1,0 +1,96 @@
+---
+/**
+ * One project. In cinematic mode it is a full-screen scene; otherwise it
+ * is a card in a list. Links to its page when it is a case study.
+ */
+import type { CollectionEntry } from 'astro:content';
+import Tag from '@/components/ui/Tag.astro';
+import Route from '@/components/ui/Route.astro';
+import RouteDiagram from '@/components/ui/RouteDiagram.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index: number;
+  total: number;
+}
+
+const { project, index, total } = Astro.props;
+const { title, summary, from, to, tags, caseStudy, result, context, featured } = project.data;
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** The agent pipeline shown beside the featured project. */
+const agentSteps = [
+  ['discover', 'parse legacy code, map lineage'],
+  ['design', 'layers and data contracts'],
+  ['generate', 'an LLM writes the PySpark'],
+  ['reconcile', 'diff against legacy output'],
+  ['review', 'a human approves'],
+];
+---
+
+<article
+  data-project-slide
+  data-reveal
+  class="border-line bg-surface cine:absolute cine:inset-0 cine:items-center cine:gap-12 cine:overflow-visible cine:border-0 cine:bg-transparent grid overflow-hidden rounded-xl border md:grid-cols-[1.25fr_1fr]"
+>
+  <div data-slide-copy class="cine:p-0 flex min-w-0 flex-col gap-4 p-6 md:p-8">
+    <span class="label">
+      {pad(index + 1)} / {pad(total)}
+      {context && ` · ${context}`}
+    </span>
+    <Route from={from} to={to} />
+    <h3
+      class="cine:text-5xl cine:leading-[1.05] cine:tracking-tight text-2xl font-bold md:text-3xl"
+      transition:name={`title-${project.id}`}
+    >
+      {title}
+    </h3>
+    <p class="text-muted cine:text-lg leading-relaxed">{summary}</p>
+    {!featured && result && <p class="text-target font-mono text-xs">✓ {result}</p>}
+    <div class="flex flex-wrap gap-1.5">
+      {tags.map((tag) => (
+        <Tag>{tag}</Tag>
+      ))}
+    </div>
+    {caseStudy && (
+      <a href={`/projects/${project.id}/`} class="group text-target self-start text-sm font-medium">
+        Read the case study
+        <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+      </a>
+    )}
+  </div>
+
+  <div
+    data-slide-visual
+    class="border-line bg-bg cine:rounded-xl cine:border cine:bg-surface min-w-0 border-t p-6 md:border-t-0 md:border-l md:p-8"
+  >
+    {featured ? (
+      <div class="font-mono text-[13px]">
+        <p class="label mb-4">agent pipeline</p>
+        <ol class="flex flex-col gap-3">
+          {agentSteps.map(([name, what], i) => (
+            <li data-agent-step class="grid grid-cols-[1.25rem_1fr] gap-2">
+              <span class="text-muted">{i + 1}</span>
+              <span>
+                {name}
+                <span class="text-muted block text-xs">{what}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+        {result && (
+          <p class="border-line mt-5 border-t border-dashed pt-4">
+            <span
+              data-agent-result
+              class="bg-target-soft text-target inline-block rounded px-2 py-0.5 font-medium"
+            >
+              ✓ {result}
+            </span>
+          </p>
+        )}
+      </div>
+    ) : (
+      <RouteDiagram from={from} to={to} />
+    )}
+  </div>
+</article>

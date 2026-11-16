@@ -1,9 +1,11 @@
 ---
 /**
- * Year-by-year timeline with a year strip that tracks the scroll position
- * and a growth bar that rises each year.
+ * Year-by-year timeline. In cinematic mode it is a horizontal film strip:
+ * the section holds in place and scrolling moves sideways through the years.
+ * The year strip on top fills in as each year passes.
  */
 import SectionShell from '@/components/ui/SectionShell.astro';
+import SkipLink from '@/components/ui/SkipLink.astro';
 import { timeline, type EventKind } from '@/data/experience';
 
 const kindLabel: Record<EventKind, string> = {
@@ -20,69 +22,81 @@ const isMilestone = (kind: EventKind) =>
   kind === 'role' || kind === 'award' || kind === 'certification' || kind === 'education';
 ---
 
-<SectionShell id="experience" intro="From intern to consultant to MSc student, one year at a time.">
-  <div
-    class="bg-bg/90 border-line sticky top-[57px] z-20 -mx-4 mb-10 border-y px-4 py-3 backdrop-blur"
-    data-reveal
-  >
-    <ol class="flex items-end justify-between gap-2" aria-label="Jump to a year">
-      {timeline.map((y) => (
-        <li class="flex-1">
-          <a href={`#year-${y.year}`} data-year-link={y.year} class="group flex flex-col gap-1.5">
-            <span
-              class="bg-line group-data-[active]:bg-target block w-full rounded-sm transition-colors"
-              style={`height:${y.growth * 7}px`}
-            />
-            <span class="text-muted group-data-[active]:text-ink font-mono text-xs tabular-nums transition-colors sm:text-sm">
-              {y.year}
-            </span>
-          </a>
-        </li>
-      ))}
-    </ol>
-  </div>
+<SectionShell
+  id="experience"
+  scene="pin"
+  intro="From intern to consultant to MSc student, one year at a time."
+>
+  <SkipLink slot="meta" href="#skills" label="skip to skills" />
 
-  <ol class="flex flex-col">
-    {timeline.map((y) => (
-      <li
-        id={`year-${y.year}`}
-        data-year={y.year}
-        class="border-line grid scroll-mt-40 gap-6 border-b py-10 last:border-b-0 md:grid-cols-[220px_1fr] md:gap-10"
-      >
-        <div class="self-start md:sticky md:top-40" data-reveal>
-          <p class="font-display text-6xl leading-none font-bold tracking-tight tabular-nums md:text-7xl">
-            {y.year}
-          </p>
-          <p class="text-target mt-3 font-mono text-xs tracking-wider uppercase">{y.level}</p>
-          <p class="text-muted mt-2 text-sm">{y.summary}</p>
-        </div>
-        <ul class="flex min-w-0 flex-col gap-3">
-          {y.events.map((event) => (
-            <li
-              data-reveal
-              class="border-line bg-surface grid gap-x-4 gap-y-1 rounded-lg border p-4 sm:grid-cols-[6.5rem_1fr]"
+  <div class="cine:flex cine:h-full cine:flex-col">
+    <div
+      class="bg-bg/90 border-line cine:static cine:mb-6 sticky top-[57px] z-20 -mx-4 mb-10 border-y px-4 py-3 backdrop-blur"
+      data-reveal
+    >
+      <ol class="flex items-end justify-between gap-2" aria-label="Jump to a year">
+        {timeline.map((y, i) => (
+          <li class="flex-1">
+            <a
+              href={`#year-${y.year}`}
+              data-year-link={y.year}
+              data-year-index={i}
+              class="group flex flex-col gap-1.5"
             >
-              <div class="flex items-center gap-2 sm:flex-col sm:items-start sm:gap-1">
-                <span
-                  class:list={[
-                    'rounded px-1.5 py-0.5 font-mono text-[11px]',
-                    isMilestone(event.kind)
-                      ? 'bg-target-soft text-target'
-                      : 'bg-source-soft text-source',
-                  ]}
-                >
-                  {kindLabel[event.kind]}
-                </span>
-                {event.when && <span class="text-muted font-mono text-[11px]">{event.when}</span>}
-              </div>
-              <div class="min-w-0">
-                <h3 class="font-sans text-base font-semibold">{event.title}</h3>
-                {event.detail && <p class="text-muted mt-1 text-sm">{event.detail}</p>}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </li>
-    ))}
-  </ol>
+              <span
+                class="bg-line group-data-[passed]:bg-target block w-full rounded-sm transition-colors"
+                style={`height:${y.growth * 7}px`}
+              />
+              <span class="text-muted group-data-[active]:text-ink font-mono text-xs tabular-nums transition-colors sm:text-sm">
+                {y.year}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="cine:min-h-0 cine:flex-1">
+      <ol data-year-track class="cine:w-max cine:flex-row cine:gap-16 flex flex-col">
+        {timeline.map((y) => (
+          <li
+            id={`year-${y.year}`}
+            data-year={y.year}
+            class="border-line cine:w-[min(82vw,64rem)] cine:shrink-0 cine:border-b-0 cine:py-0 grid scroll-mt-40 gap-6 border-b py-10 last:border-b-0 md:grid-cols-[220px_1fr] md:gap-10"
+          >
+            <div class="cine:static self-start md:sticky md:top-40" data-reveal>
+              <p class="font-display text-6xl leading-none font-bold tracking-tight tabular-nums md:text-7xl">
+                {y.year}
+              </p>
+              <p class="text-target mt-3 font-mono text-xs tracking-wider uppercase">{y.level}</p>
+              <p class="text-muted mt-2 text-sm">{y.summary}</p>
+            </div>
+            <ul class="cine:grid cine:grid-cols-2 cine:content-start flex min-w-0 flex-col gap-3">
+              {y.events.map((event) => (
+                <li data-reveal class="border-line bg-surface rounded-lg border p-4">
+                  <div class="mb-1.5 flex items-center gap-2">
+                    <span
+                      class:list={[
+                        'rounded px-1.5 py-0.5 font-mono text-[11px]',
+                        isMilestone(event.kind)
+                          ? 'bg-target-soft text-target'
+                          : 'bg-source-soft text-source',
+                      ]}
+                    >
+                      {kindLabel[event.kind]}
+                    </span>
+                    {event.when && (
+                      <span class="text-muted font-mono text-[11px]">{event.when}</span>
+                    )}
+                  </div>
+                  <h3 class="font-sans text-base font-semibold">{event.title}</h3>
+                  {event.detail && <p class="text-muted mt-1 text-sm">{event.detail}</p>}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
 </SectionShell>

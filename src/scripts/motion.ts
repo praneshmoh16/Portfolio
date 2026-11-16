@@ -1,8 +1,9 @@
 /**
  * Scroll and entrance motion for every page.
  *
- * - Desktop: smooth scrolling (Lenis), the stage rail, the hero pipeline.
- * - Phones: simple fades and a static pipeline diagram.
+ * - Cinematic (desktop with a mouse): every section is a full-screen scene
+ *   driven by the scroll position. See scenes.ts.
+ * - Phones and tablets: simple fades and a static pipeline diagram.
  * - "Reduce motion": no movement at all; the page shows its finished state.
  *
  * initMotion runs on every page load (including after a page transition)
@@ -11,14 +12,27 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { isDesktopPointer, prefersReducedMotion } from '@/scripts/env';
-import { createPipelineTimeline } from '@/scripts/pipeline';
+import {
+  isCinematic,
+  isDesktopPointer,
+  onCinematicChange,
+  prefersReducedMotion,
+} from '@/scripts/env';
+import { createPipelineLoop } from '@/scripts/pipeline';
+import { experienceScene, heroScene, markYear, projectsScene, riseScenes } from '@/scripts/scenes';
 
 gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Triggers that measure a pinned section's full scroll length must be
+ * measured after the pins have added their spacing.
+ */
+const AFTER_PINS = -1;
 
 let lenis: Lenis | null = null;
 let context: gsap.Context | null = null;
 let onTick: ((time: number) => void) | null = null;
+let removeSceneListeners: (() => void) | null = null;
 
 function startSmoothScroll(): void {
   lenis = new Lenis({ anchors: { offset: -56 } });
@@ -80,8 +94,14 @@ function trackStages(): void {
 
   gsap.utils.toArray<HTMLElement>('[data-stage]').forEach((section) => {
     section.dataset.status = 'queued';
+    // A pinned section sits inside a taller spacer; track that so the stage
+    // stays "running" for the whole time the scene is held.
+    const spacer = section.parentElement?.classList.contains('pin-spacer')
+      ? section.parentElement
+      : section;
     ScrollTrigger.create({
-      trigger: section,
+      trigger: spacer,
+      refreshPriority: AFTER_PINS,
       start: 'top 55%',
       end: 'bottom 55%',
       onEnter: () => {
@@ -109,18 +129,21 @@ function animateRail(): void {
   gsap.to(fill, {
     scaleY: 1,
     ease: 'none',
-    scrollTrigger: { trigger: '#main', start: 'top top', end: 'bottom bottom', scrub: 0.4 },
+    scrollTrigger: {
+      trigger: '#main',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.4,
+      refreshPriority: AFTER_PINS,
+    },
   });
 }
 
 /** The year strip above the timeline highlights the year being read. */
 function trackYears(): void {
   const links = gsap.utils.toArray<HTMLElement>('[data-year-link]');
-  gsap.utils.toArray<HTMLElement>('[data-year]').forEach((block) => {
-    const activate = () =>
-      links.forEach((link) =>
-        link.toggleAttribute('data-active', link.dataset.yearLink === block.dataset.year),
-      );
+  gsap.utils.toArray<HTMLElement>('[data-year]').forEach((block, i) => {
+    const activate = () => markYear(links, i);
     ScrollTrigger.create({
       trigger: block,
       start: 'top 50%',
@@ -131,41 +154,60 @@ function trackYears(): void {
   });
 }
 
-/** The hero pipeline plays only while it is on screen. */
+/** The hero pipeline loops on its own, and only while it is on screen. */
 function animatePipeline(): void {
   const root = document.querySelector<HTMLElement>('[data-pipeline]');
   if (!root) return;
-  const timeline = createPipelineTimeline(root);
-  if (!timeline) return;
+  const loop = createPipelineLoop(root);
+  if (!loop) return;
   ScrollTrigger.create({
     trigger: root,
     start: 'top bottom',
     end: 'bottom top',
-    onToggle: (self) => (self.isActive ? timeline.play() : timeline.pause()),
+    onToggle: (self) => (self.isActive ? loop.play() : loop.pause()),
   });
+}
+
+function scrollToY(y: number): void {
+  if (lenis) lenis.scrollTo(y);
+  else window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
 export function initMotion(): void {
   destroyMotion();
+
+  const cinematic = isCinematic();
+  document.documentElement.classList.toggle('cinematic', cinematic);
   if (prefersReducedMotion()) return;
 
   const full = isDesktopPointer();
   if (full) startSmoothScroll();
 
   context = gsap.context(() => {
-    animateHero(full);
-    animateReveals(full);
+    if (cinematic) {
+      // Scenes are created in page order so each pin knows about the ones above it.
+      heroScene();
+      projectsScene();
+      removeSceneListeners = experienceScene(scrollToY);
+      riseScenes();
+    } else {
+      animateHero(full);
+      animateReveals(full);
+      trackYears();
+      if (full) animatePipeline();
+    }
     animateCounts();
     trackStages();
-    trackYears();
-    if (full) {
-      animateRail();
-      animatePipeline();
-    }
+    if (full) animateRail();
   });
+
+  ScrollTrigger.sort();
+  ScrollTrigger.refresh();
 }
 
 export function destroyMotion(): void {
+  removeSceneListeners?.();
+  removeSceneListeners = null;
   context?.revert();
   context = null;
   if (onTick) gsap.ticker.remove(onTick);
@@ -173,3 +215,7 @@ export function destroyMotion(): void {
   lenis?.destroy();
   lenis = null;
 }
+
+// Layout fonts and crossing the cinematic breakpoint both change scene sizes.
+document.fonts.ready.then(() => ScrollTrigger.refresh());
+onCinematicChange(initMotion);

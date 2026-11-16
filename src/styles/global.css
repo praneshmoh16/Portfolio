@@ -1,6 +1,12 @@
 @import 'tailwindcss';
 
 /*
+ * "cine:" classes apply only in cinematic mode: a desktop screen with a mouse
+ * and motion allowed. The theme script in BaseHead adds the .cinematic class.
+ */
+@custom-variant cine (&:where(.cinematic, .cinematic *));
+
+/*
  * Design tokens.
  * Amber (--source) always means legacy / source / in progress.
  * Teal (--target) always means cloud / target / verified.

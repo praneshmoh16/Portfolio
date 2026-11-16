@@ -2,27 +2,44 @@
 /**
  * Wraps a home page section. Shows its pipeline stage and a status chip
  * that moves from queued to running to done as the visitor scrolls.
+ *
+ * `scene` chooses how the section plays in cinematic mode:
+ * - "pin": the section fills the screen and holds while its animation runs.
+ * - "rise": the section fills the screen and its content rises in and out.
  */
 import { getStage } from '@/data/sections';
 
 interface Props {
   id: string;
   intro?: string;
+  scene: 'pin' | 'rise';
 }
 
-const { id, intro } = Astro.props;
+const { id, intro, scene } = Astro.props;
 const { stage, index, total } = getStage(id);
 const pad = (n: number) => String(n).padStart(2, '0');
+const pin = scene === 'pin';
 ---
 
 <section
   id={id}
   data-stage
+  data-scene={scene}
   data-status="done"
-  class="border-line scroll-mt-16 border-t py-20 md:py-28"
+  class:list={[
+    'border-line scroll-mt-16 border-t py-20 md:py-28',
+    pin && 'cine:h-[calc(100svh-57px)] cine:overflow-hidden cine:py-8',
+    !pin && 'cine:flex cine:min-h-[calc(100svh-57px)] cine:items-center',
+  ]}
 >
-  <div class="mx-auto w-full max-w-5xl px-4">
-    <header class="mb-12 flex flex-col gap-4" data-reveal>
+  <div
+    data-scene-inner
+    class:list={[
+      'mx-auto w-full max-w-5xl px-4',
+      pin && 'cine:flex cine:h-full cine:max-w-6xl cine:flex-col',
+    ]}
+  >
+    <header class:list={['mb-12 flex flex-col gap-4', pin && 'cine:mb-5 cine:gap-2']} data-reveal>
       <div class="flex flex-wrap items-center gap-3">
         <span class="label">
           stage {pad(index)} / {pad(total)} · {stage.stage}
@@ -38,10 +55,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
             ✓ done
           </span>
         </span>
+        <slot name="meta" />
       </div>
-      <h2 class="text-3xl font-bold tracking-tight md:text-5xl">{stage.title}</h2>
-      {intro && <p class="text-muted max-w-2xl text-lg">{intro}</p>}
+      <h2 class:list={['text-3xl font-bold tracking-tight md:text-5xl', pin && 'cine:text-3xl']}>
+        {stage.title}
+      </h2>
+      {intro && <p class:list={['text-muted max-w-2xl text-lg', pin && 'cine:hidden']}>{intro}</p>}
     </header>
-    <slot />
+    <div class:list={[pin && 'cine:relative cine:min-h-0 cine:flex-1']}>
+      <slot />
+    </div>
   </div>
 </section>

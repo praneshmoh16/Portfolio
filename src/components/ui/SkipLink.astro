@@ -1,0 +1,16 @@
+---
+/** Shown in cinematic mode only: lets a visitor jump past a long scene. */
+interface Props {
+  href: string;
+  label: string;
+}
+
+const { href, label } = Astro.props;
+---
+
+<a
+  href={href}
+  class="text-muted hover:text-ink cine:inline ml-auto hidden font-mono text-xs underline underline-offset-4"
+>
+  {label} ↓
+</a>

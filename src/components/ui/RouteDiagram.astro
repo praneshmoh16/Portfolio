@@ -1,0 +1,24 @@
+---
+/** Large "from, then to" diagram used on project scenes. */
+interface Props {
+  from: string;
+  to: string;
+}
+
+const { from, to } = Astro.props;
+---
+
+<div class="flex flex-col font-mono">
+  <p class="label mb-4">data flow</p>
+  <div class="border-source/40 bg-source-soft/50 rounded-lg border p-4">
+    <p class="text-source text-[11px] tracking-wider uppercase">from</p>
+    <p class="text-source mt-1 text-lg font-medium">{from}</p>
+  </div>
+  <div class="bg-line relative ml-8 h-10 w-px" aria-hidden="true">
+    <span data-flow-line class="bg-target absolute inset-0 origin-top"></span>
+  </div>
+  <div data-flow-target class="border-target/40 bg-target-soft/50 rounded-lg border p-4">
+    <p class="text-target text-[11px] tracking-wider uppercase">to</p>
+    <p class="text-target mt-1 text-lg font-medium">{to}</p>
+  </div>
+</div>
