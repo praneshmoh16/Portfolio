@@ -47,9 +47,11 @@ src/
   config/site.ts         name, tagline, navigation and social links
   content/projects/      one Markdown file per project
   content.config.ts      the fields every project file must have
+  data/                  hero, timeline, skills, credentials, education, about
   layouts/               page shells
   lib/                   helper functions
   pages/                 one file per route
+  scripts/               motion: scrolling, cursor and the hero pipeline
   styles/global.css      Tailwind import and design tokens
 docs/reference/          the first single-file version, kept for reference
 ```
@@ -59,6 +61,10 @@ docs/reference/          the first single-file version, kept for reference
 - **Name, tagline, nav or social links:** edit `src/config/site.ts`.
 - **Add a project:** add a Markdown file to `src/content/projects/` with the
   fields listed in `src/content.config.ts`.
+- **Timeline, skills, certifications, education, about:** edit the matching
+  file in `src/data/`.
+- **Give a project its own page:** set `caseStudy: true` in its Markdown file
+  and write the page content below the `---` line.
 - **Colours and fonts:** edit the tokens in `src/styles/global.css`.
 
 ## Conventions

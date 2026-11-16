@@ -1,33 +1,153 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens. Colours, fonts and spacing for the whole site are defined
- * here once and used through Tailwind classes (for example bg-surface).
- * Values are neutral placeholders until the visual direction is agreed.
+ * Design tokens.
+ * Amber (--source) always means legacy / source / in progress.
+ * Teal (--target) always means cloud / target / verified.
+ * The theme script in BaseHead sets data-theme to "light" or "dark".
  */
-@theme {
-  --color-surface: #ffffff;
-  --color-ink: #111827;
-  --color-muted: #6b7280;
-  --color-accent: #2563eb;
+:root {
+  --bg: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #12211f;
+  --muted: #55645f;
+  --line: #d5ddd9;
+  --source: #b4651b;
+  --source-soft: #f6e7d8;
+  --target: #0b7a6e;
+  --target-soft: #dcefeb;
+  color-scheme: light;
+}
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+:root[data-theme='dark'] {
+  --bg: #0c1413;
+  --surface: #131e1c;
+  --ink: #e3ece9;
+  --muted: #8fa09b;
+  --line: #263532;
+  --source: #e9a15a;
+  --source-soft: #3a2a1a;
+  --target: #4fd1bf;
+  --target-soft: #143631;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-source: var(--source);
+  --color-source-soft: var(--source-soft);
+  --color-target: var(--target);
+  --color-target-soft: var(--target-soft);
+
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-  }
-
   body {
-    background-color: var(--color-surface);
-    color: var(--color-ink);
+    background-color: var(--bg);
+    color: var(--ink);
     font-family: var(--font-sans);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--target);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--target-soft);
+  }
+}
+
+@layer components {
+  /* Small monospace label used for stage names, dates and captions. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Card that lights up under the pointer (see scripts/cursor.ts). */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    background: radial-gradient(
+      320px circle at var(--mx, 50%) var(--my, 50%),
+      var(--target-soft),
+      transparent 70%
+    );
+    transition: opacity 0.3s ease;
+  }
+
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* Stage status chip: queued -> running -> done, driven by data-status. */
+  .status [data-state] {
+    display: none;
+  }
+
+  [data-status='queued'] .status [data-state='queued'],
+  [data-status='running'] .status [data-state='running'],
+  [data-status='done'] .status [data-state='done'] {
+    display: inline-flex;
+  }
+
+  .pulse {
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Custom cursor is only shown on devices with a mouse and motion allowed. */
+.cursor-on,
+.cursor-on a,
+.cursor-on button {
+  cursor: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

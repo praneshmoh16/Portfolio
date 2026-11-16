@@ -1,0 +1,107 @@
+---
+/**
+ * The hero diagram: five rows move from a legacy table through extract,
+ * transform and validate into a cloud table, then a reconciliation check
+ * passes. Animated by scripts/pipeline.ts; without motion it shows the
+ * finished state.
+ */
+const rows = [0.9, 0.62, 0.78, 0.5, 0.7];
+const steps = ['extract', 'transform', 'validate'];
+---
+
+<figure
+  data-pipeline
+  class="border-line bg-surface rounded-xl border p-4 shadow-sm sm:p-5"
+  aria-label="Diagram: five rows move from a legacy table through extract, transform and validate into a cloud table. Rows in 5, rows out 5, difference 0, result pass."
+>
+  <div class="mb-4 flex items-center justify-between">
+    <span class="label">pipeline.run</span>
+    <span class="flex gap-1.5" aria-hidden="true">
+      <span class="bg-line size-2 rounded-full"></span>
+      <span class="bg-line size-2 rounded-full"></span>
+      <span class="bg-line size-2 rounded-full"></span>
+    </span>
+  </div>
+
+  <div class="grid grid-cols-[1fr_1.3fr_1fr] items-stretch gap-2 sm:gap-3" aria-hidden="true">
+    <div class="border-source/40 bg-source-soft/50 rounded-lg border p-2.5 sm:p-3">
+      <p class="text-source mb-3 font-mono text-[10px] tracking-wider uppercase sm:text-xs">
+        legacy
+      </p>
+      <div class="flex flex-col gap-2">
+        {rows.map((w) => (
+          <span
+            data-source-row
+            class="bg-source block h-2 rounded-sm"
+            style={`width:${w * 100}%`}
+          />
+        ))}
+      </div>
+    </div>
+
+    <div class="relative flex flex-col justify-center" data-track>
+      <div class="bg-line absolute top-1/2 right-0 left-0 h-px"></div>
+      <span
+        data-packet
+        class="bg-source absolute top-1/2 left-0 -mt-1 hidden h-2 w-5 rounded-sm"
+      ></span>
+      <ol class="relative flex justify-between">
+        {steps.map((step, i) => (
+          <li class="flex w-0 flex-1 flex-col items-center gap-1.5">
+            <span class="text-muted h-4 font-mono text-[9px] sm:text-[11px]">
+              {i % 2 === 1 ? step : ''}
+            </span>
+            <span
+              data-step
+              class="border-line bg-surface size-3 rounded-full border-2 transition-colors"
+            />
+            <span class="text-muted h-4 font-mono text-[9px] sm:text-[11px]">
+              {i % 2 === 0 ? step : ''}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <div class="border-target/40 bg-target-soft/50 rounded-lg border p-2.5 sm:p-3">
+      <p class="text-target mb-3 font-mono text-[10px] tracking-wider uppercase sm:text-xs">
+        cloud
+      </p>
+      <div class="flex flex-col gap-2">
+        {rows.map((w) => (
+          <span
+            data-target-row
+            class="bg-target block h-2 origin-left rounded-sm"
+            style={`width:${w * 100}%`}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <figcaption
+    class="border-line mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-dashed pt-3 font-mono text-xs"
+    aria-hidden="true"
+  >
+    <span class="text-muted flex gap-4 tabular-nums">
+      <span>
+        rows_in{' '}
+        <b class="text-ink font-medium" data-rows-in>
+          5
+        </b>
+      </span>
+      <span>
+        rows_out{' '}
+        <b class="text-ink font-medium" data-rows-out>
+          5
+        </b>
+      </span>
+      <span>
+        diff <b class="text-ink font-medium">0</b>
+      </span>
+    </span>
+    <span data-pass class="bg-target-soft text-target rounded px-2 py-0.5 font-medium">
+      ✓ reconciled: PASS
+    </span>
+  </figcaption>
+</figure>

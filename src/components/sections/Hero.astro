@@ -1,0 +1,57 @@
+---
+import PipelineDemo from '@/components/sections/PipelineDemo.astro';
+import { hero } from '@/data/hero';
+import { siteConfig } from '@/config/site';
+---
+
+<section id="top" data-stage data-status="done" class="scroll-mt-16">
+  <div class="mx-auto grid w-full max-w-5xl items-center gap-12 px-4 py-16 md:py-24 lg:grid-cols-[1.1fr_1fr]">
+    <div class="min-w-0">
+      <p class="label" data-hero-item>
+        {hero.eyebrow}
+      </p>
+      <h1 class="mt-5 text-5xl leading-[1.02] font-bold tracking-tight sm:text-6xl md:text-7xl">
+        <span class="sr-only">{siteConfig.name}. </span>
+        {hero.headline.map((line) => (
+          <span class="block" data-hero-item>
+            {line}
+          </span>
+        ))}
+        <span class="text-target block" data-hero-item>
+          {hero.headlineAccent}
+        </span>
+      </h1>
+      <p class="text-muted mt-6 max-w-xl text-lg" data-hero-item>
+        <span class="text-ink font-medium">I'm {siteConfig.name}.</span> {hero.intro}
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3" data-hero-item>
+        <a
+          href="#projects"
+          class="bg-ink text-bg rounded-full px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-85"
+        >
+          See my work
+        </a>
+        <a
+          href="#contact"
+          class="border-line hover:border-ink rounded-full border px-5 py-2.5 text-sm font-medium transition-colors"
+        >
+          Get in touch
+        </a>
+      </div>
+      <dl class="mt-10 flex flex-wrap gap-x-10 gap-y-4" data-hero-item>
+        {hero.stats.map((stat) => (
+          <div>
+            <dd class="font-display text-3xl font-bold tabular-nums">
+              <span data-count={stat.value}>{stat.value}</span>
+              {stat.suffix}
+            </dd>
+            <dt class="text-muted text-sm">{stat.label}</dt>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <div class="min-w-0" data-hero-item>
+      <PipelineDemo />
+    </div>
+  </div>
+</section>

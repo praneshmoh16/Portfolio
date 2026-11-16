@@ -1,0 +1,55 @@
+---
+import SectionShell from '@/components/ui/SectionShell.astro';
+import { siteConfig } from '@/config/site';
+---
+
+<SectionShell
+  id="contact"
+  intro="Hiring for a machine learning, AI or data role? Email is the quickest way to reach me."
+>
+  <div class="flex flex-wrap items-center gap-3" data-reveal>
+    <a
+      href={`mailto:${siteConfig.email}`}
+      class="border-line bg-surface hover:border-target rounded-lg border px-4 py-2.5 font-mono text-sm transition-colors sm:text-base"
+    >
+      {siteConfig.email}
+    </a>
+    <button
+      type="button"
+      data-copy={siteConfig.email}
+      class="bg-ink text-bg rounded-lg px-4 py-2.5 text-sm font-medium transition-opacity hover:opacity-85"
+    >
+      Copy email
+    </button>
+    <span class="text-muted text-sm" data-copy-status aria-live="polite"></span>
+  </div>
+  <ul class="mt-6 flex flex-wrap gap-5" data-reveal>
+    {siteConfig.socials.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-target underline underline-offset-4"
+        >
+          {link.label} ↗
+        </a>
+      </li>
+    ))}
+  </ul>
+</SectionShell>
+
+<script>
+  document.addEventListener('click', async (event) => {
+    const button = (event.target as Element | null)?.closest<HTMLElement>('[data-copy]');
+    if (!button) return;
+
+    const status = document.querySelector('[data-copy-status]');
+    try {
+      await navigator.clipboard.writeText(button.dataset.copy ?? '');
+      if (status) status.textContent = 'Copied';
+    } catch {
+      if (status) status.textContent = 'Copy failed. Select the address and copy it.';
+    }
+  });
+</script>

@@ -1,0 +1,98 @@
+---
+/** Case-study page. Built for every project with `caseStudy: true`. */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Tag from '@/components/ui/Tag.astro';
+import Route from '@/components/ui/Route.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects', ({ data }) => data.caseStudy);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { title, summary, from, to, tags, context, result } = project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={title} description={summary}>
+  <article class="mx-auto w-full max-w-3xl px-4 py-14 md:py-20">
+    <a href="/#projects" class="text-muted hover:text-ink font-mono text-xs">
+      ← all projects
+    </a>
+    <header class="border-line mt-8 flex flex-col gap-4 border-b pb-10">
+      {context && <span class="label">{context}</span>}
+      <Route from={from} to={to} />
+      <h1
+        class="text-4xl font-bold tracking-tight md:text-6xl"
+        transition:name={`title-${project.id}`}
+      >
+        {title}
+      </h1>
+      <p class="text-muted text-xl leading-relaxed">{summary}</p>
+      {result && <p class="text-target font-mono text-sm">✓ {result}</p>}
+      <div class="flex flex-wrap gap-1.5">
+        {tags.map((tag) => (
+          <Tag>{tag}</Tag>
+        ))}
+      </div>
+    </header>
+    <div class="case-study mt-10">
+      <Content />
+    </div>
+    <footer class="border-line mt-14 border-t pt-8">
+      <a href="/#contact" class="text-target underline underline-offset-4">
+        Want to talk about a project like this? Get in touch
+      </a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style is:global>
+  .case-study h2 {
+    margin-top: 2.75rem;
+    margin-bottom: 0.9rem;
+    font-size: 1.625rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .case-study p,
+  .case-study li {
+    color: var(--muted);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+
+  .case-study p + p {
+    margin-top: 1rem;
+  }
+
+  .case-study strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .case-study ul,
+  .case-study ol {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 1.25rem;
+  }
+
+  .case-study ul {
+    list-style: disc;
+  }
+
+  .case-study ol {
+    list-style: decimal;
+  }
+
+  .case-study li::marker {
+    color: var(--target);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+/** One project on the home page. Links to its page when it is a case study. */
+import type { CollectionEntry } from 'astro:content';
+import Tag from '@/components/ui/Tag.astro';
+import Route from '@/components/ui/Route.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, summary, from, to, tags, caseStudy, result, context } = project.data;
+const href = caseStudy ? `/projects/${project.id}/` : undefined;
+const Wrapper = href ? 'a' : 'article';
+---
+
+<Wrapper
+  href={href}
+  data-tilt
+  data-reveal
+  class:list={[
+    'spotlight border-line bg-surface flex h-full flex-col gap-3 rounded-xl border p-6 transition-colors',
+    href && 'hover:border-target group',
+  ]}
+>
+  <Route from={from} to={to} />
+  <h3 class="text-xl font-bold" transition:name={`title-${project.id}`}>
+    {title}
+  </h3>
+  <p class="text-muted text-[15px] leading-relaxed">{summary}</p>
+  {result && <p class="text-target font-mono text-xs">✓ {result}</p>}
+  <div class="mt-auto flex flex-wrap gap-1.5 pt-3">
+    {tags.map((tag) => (
+      <Tag>{tag}</Tag>
+    ))}
+  </div>
+  {context && <p class="text-muted text-xs">{context}</p>}
+  {href && (
+    <span class="text-target text-sm font-medium">
+      Read the case study
+      <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+    </span>
+  )}
+</Wrapper>

@@ -1,11 +1,16 @@
 ---
 /**
- * The shell every page uses: <head>, header, main content and footer.
+ * The shell every page uses: <head>, header, main content and footer,
+ * plus the motion scripts.
  */
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
 import '@/styles/global.css';
 import BaseHead from '@/components/seo/BaseHead.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
+import Cursor from '@/components/layout/Cursor.astro';
 import { siteConfig } from '@/config/site';
 
 interface Props {
@@ -22,10 +27,27 @@ const { title, description } = Astro.props;
     <BaseHead title={title} description={description} />
   </head>
   <body class="flex min-h-screen flex-col antialiased">
+    <a
+      href="#main"
+      class="bg-surface sr-only z-50 rounded px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Skip to content
+    </a>
     <Header />
-    <main class="mx-auto w-full max-w-5xl flex-1 px-4">
+    <main id="main" class="flex-1">
       <slot />
     </main>
     <Footer />
+    <Cursor />
+    <script>
+      import { initMotion, destroyMotion } from '@/scripts/motion';
+      import { initCursor } from '@/scripts/cursor';
+
+      document.addEventListener('astro:page-load', () => {
+        initMotion();
+        initCursor();
+      });
+      document.addEventListener('astro:before-swap', destroyMotion);
+    </script>
   </body>
 </html>

@@ -1,8 +1,9 @@
 ---
 /**
- * Everything that belongs in <head>: title, description, canonical link
- * and social preview tags.
+ * Everything that belongs in <head>: title, description, canonical link,
+ * social preview tags, the theme script and page transitions.
  */
+import { ClientRouter } from 'astro:transitions';
 import { siteConfig } from '@/config/site';
 
 interface Props {
@@ -15,6 +16,15 @@ const pageTitle = title
   ? `${title} | ${siteConfig.name}`
   : `${siteConfig.name} | ${siteConfig.role}`;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: siteConfig.name,
+  jobTitle: siteConfig.role,
+  address: { '@type': 'PostalAddress', addressLocality: 'Dublin', addressCountry: 'IE' },
+  sameAs: siteConfig.socials.map((s) => s.href),
+};
 ---
 
 <meta charset="utf-8" />
@@ -29,4 +39,27 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 <meta property="og:title" content={pageTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content="summary" />
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(personSchema)} />
+<!-- Sets the theme before the page paints, so there is no flash of the wrong colours. -->
+<script is:inline>
+  (() => {
+    const applyTheme = () => {
+      let theme = null;
+      try {
+        theme = localStorage.getItem('theme');
+      } catch {
+        /* storage unavailable: fall back to the device setting */
+      }
+      if (theme !== 'light' && theme !== 'dark') {
+        theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.dataset.theme = theme;
+    };
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script>
+
+<ClientRouter />

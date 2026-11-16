@@ -4,17 +4,13 @@ import { siteConfig } from '@/config/site';
 const year = new Date().getFullYear();
 ---
 
-<footer class="text-muted mx-auto flex w-full max-w-5xl flex-wrap justify-between gap-4 px-4 py-8 text-sm">
-  <span>
-    © {year} {siteConfig.name}
-  </span>
-  <ul class="flex gap-4">
-    {siteConfig.socials.map((link) => (
-      <li>
-        <a href={link.href} target="_blank" rel="noopener noreferrer" class="hover:text-ink">
-          {link.label}
-        </a>
-      </li>
-    ))}
-  </ul>
+<footer class="border-line border-t">
+  <div class="text-muted mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-8 text-sm">
+    <span>
+      © {year} {siteConfig.name} · {siteConfig.location}
+    </span>
+    <span class="font-mono text-xs">
+      pipeline status: <span class="text-target">PASS</span>
+    </span>
+  </div>
 </footer>

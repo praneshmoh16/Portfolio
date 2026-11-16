@@ -1,0 +1,28 @@
+---
+import SectionShell from '@/components/ui/SectionShell.astro';
+import { skillGroups } from '@/data/skills';
+---
+
+<SectionShell id="skills" intro="The tools I use, with the ones I know best marked in teal.">
+  <dl class="grid gap-x-10 gap-y-8 md:grid-cols-2">
+    {skillGroups.map((group) => (
+      <div data-reveal class="min-w-0">
+        <dt class="label mb-3">{group.title}</dt>
+        <dd class="flex flex-wrap gap-2">
+          {group.skills.map((skill) => (
+            <span
+              class:list={[
+                'rounded-md border px-3 py-1.5 text-sm',
+                skill.core
+                  ? 'border-target/50 bg-target-soft text-target font-medium'
+                  : 'border-line bg-surface',
+              ]}
+            >
+              {skill.name}
+            </span>
+          ))}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</SectionShell>

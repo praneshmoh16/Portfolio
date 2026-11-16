@@ -1,0 +1,18 @@
+---
+/** "from → to" line: amber source, teal target. */
+interface Props {
+  from: string;
+  to: string;
+}
+
+const { from, to } = Astro.props;
+---
+
+<p class="font-mono text-xs">
+  <span class="text-source">{from}</span>
+  <span class="text-muted" aria-label="to">
+    {' '}
+    →{' '}
+  </span>
+  <span class="text-target">{to}</span>
+</p>
