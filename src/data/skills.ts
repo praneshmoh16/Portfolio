@@ -17,6 +17,7 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       { name: 'Snowflake', core: true },
       { name: 'Microsoft Fabric', core: true },
+      { name: 'Delta Lake' },
     ],
   },
   {
@@ -53,6 +54,7 @@ export const skillGroups: SkillGroup[] = [
       { name: 'Azure' },
       { name: 'AWS' },
       { name: 'Docker' },
+      { name: 'Azure DevOps' },
       { name: 'CI/CD' },
       { name: 'Git' },
     ],

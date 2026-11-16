@@ -38,5 +38,8 @@ export const siteConfig: SiteConfig = {
     { label: 'About', href: '/#about' },
     { label: 'Contact', href: '/#contact' },
   ],
-  socials: [{ label: 'GitHub', href: 'https://github.com/praneshmoh16' }],
+  socials: [
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/pranesh-m-/' },
+    { label: 'GitHub', href: 'https://github.com/praneshmoh16' },
+  ],
 };

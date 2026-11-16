@@ -31,9 +31,9 @@ export const timeline: TimelineYear[] = [
       {
         kind: 'role',
         when: 'Feb',
-        title: 'Intern, Sirius Computer Solutions',
+        title: 'Software engineering intern, Sirius Computer Solutions',
         detail:
-          'Full-stack training in HTML, CSS, JavaScript, Java and MySQL, ending in a final project.',
+          'Full-stack training, then front-end developer on a React and Spring Boot app that connects coworkers in hybrid workplaces.',
       },
       {
         kind: 'education',
@@ -59,7 +59,8 @@ export const timeline: TimelineYear[] = [
         kind: 'role',
         when: 'Apr',
         title: 'Associate Consultant, CDW',
-        detail: 'Data migration and automation with Azure Data Factory, SQL Server and Snowflake.',
+        detail:
+          'ELT pipelines with Azure Data Factory into Snowflake, with reusable, metadata-driven pipeline templates.',
       },
       {
         kind: 'project',
@@ -126,13 +127,15 @@ export const timeline: TimelineYear[] = [
       {
         kind: 'project',
         title: 'CDWIT pipelines on Microsoft Fabric',
-        detail: 'Dataflows Gen2, Lakehouse and Delta tables with structured validation.',
+        detail:
+          'Medallion architecture (bronze, silver, gold) in a Fabric Lakehouse, deployed with Fabric pipelines and Azure DevOps CI/CD.',
       },
       {
         kind: 'role',
         when: 'Oct',
         title: 'Promoted to Consultant, CDW',
-        detail: 'End-to-end pipelines, data models and incremental loads for enterprise analytics.',
+        detail:
+          'End-to-end pipelines with ADF and Microsoft Fabric, incremental loads for analytics, and workflows automated with Power Automate.',
       },
     ],
   },
@@ -147,7 +150,7 @@ export const timeline: TimelineYear[] = [
         when: 'Sep',
         title: 'MSc Computer Science, University College Dublin',
         detail:
-          'Negotiated Learning programme, with modules in machine learning and text analytics.',
+          'Negotiated Learning programme: machine learning, text analytics, data mining and human-centred AI design.',
       },
       {
         kind: 'event',

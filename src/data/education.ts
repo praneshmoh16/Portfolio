@@ -12,7 +12,7 @@ export const education: Degree[] = [
     school: 'University College Dublin',
     place: 'Dublin, Ireland',
     dates: 'Sep 2026 – Sep 2027 (expected)',
-    note: 'Modules include machine learning and text analytics.',
+    note: 'Coursework includes machine learning, text analytics, data mining and human-centred AI design.',
   },
   {
     degree: 'B.E. Computer Science and Engineering',

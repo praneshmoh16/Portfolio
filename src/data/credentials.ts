@@ -17,6 +17,8 @@ export const certifications: Certification[] = [
   { name: 'SnowPro Advanced: Data Engineer', issuer: 'Snowflake' },
   { name: 'SnowPro Core', issuer: 'Snowflake' },
   { name: 'Fabric Data Engineer Associate', issuer: 'Microsoft', code: 'DP-700' },
+  { name: 'Hands On Essentials: Data Warehouse', issuer: 'Snowflake' },
+  { name: 'Fivetran Presales Professional', issuer: 'Fivetran' },
 ];
 
 export const awards: Award[] = [
