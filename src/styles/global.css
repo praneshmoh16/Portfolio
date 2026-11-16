@@ -1,0 +1,33 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Colours, fonts and spacing for the whole site are defined
+ * here once and used through Tailwind classes (for example bg-surface).
+ * Values are neutral placeholders until the visual direction is agreed.
+ */
+@theme {
+  --color-surface: #ffffff;
+  --color-ink: #111827;
+  --color-muted: #6b7280;
+  --color-accent: #2563eb;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+}
